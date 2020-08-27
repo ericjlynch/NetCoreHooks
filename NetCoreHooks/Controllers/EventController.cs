@@ -59,6 +59,7 @@ namespace NetCoreHooks.Controllers
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 _logger.LogError($"Event PostEvent failed with error message: {ex.Message} - {ex.InnerException}");
                 return BadRequest(oktaEvents);
             }
