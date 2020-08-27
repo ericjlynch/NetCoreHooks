@@ -17,6 +17,7 @@ namespace NetCoreHooks.Controllers
         private readonly ILoggerService _logger;
         private decimal PI = 3.14m;
 
+
         public HomeController(ILoggerService loggerService)
         {
             _logger = loggerService;
