@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreHooks.Contracts;
 using NetCoreHooks.model;
@@ -28,6 +29,8 @@ namespace NetCoreHooks.Controllers
 
         [HttpPost]
         [Route("user-account")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostEvent()
         {
             _logger.LogInfo("Event PostEvent action entered");
@@ -67,6 +70,8 @@ namespace NetCoreHooks.Controllers
 
         [HttpGet]
         [Route("{*more}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult EndpointVerify()
         {
             _logger.LogInfo("Event EndpointVerify entered.");            
