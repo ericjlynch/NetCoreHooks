@@ -25,10 +25,9 @@ namespace NetCoreHooks.Controllers
         // GET: api/<HomeController>
         [HttpGet]
         public string Get()
-        {
-            Debug.WriteLine("Home/Get action entered. This is the home controller. The Get Action");
+        {            
             _logger.LogInfo("Home Collection Get Action entered");
-            return "NetCoreHooks Project has loaded successfully";
+            return "NetCoreHooks Project has loaded successfully. \n Execute Postman calls now";
         }        
     }
 }
