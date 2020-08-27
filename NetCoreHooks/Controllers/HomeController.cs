@@ -15,6 +15,7 @@ namespace NetCoreHooks.Controllers
     public class HomeController : ControllerBase
     {
         private readonly ILoggerService _logger;
+        private decimal PI = 3.14m;
 
         public HomeController(ILoggerService loggerService)
         {
@@ -24,7 +25,7 @@ namespace NetCoreHooks.Controllers
         [HttpGet]
         public string Get()
         {
-            Debug.WriteLine("Home/Get action entered");
+            //Debug.WriteLine("Home/Get action entered");
             _logger.LogInfo("Home Collection Get Action entered");
             return "NetCoreHooks Project has loaded successfully";
         }        
