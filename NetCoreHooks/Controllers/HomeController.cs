@@ -26,7 +26,7 @@ namespace NetCoreHooks.Controllers
         [HttpGet]
         public string Get()
         {
-            Debug.WriteLine("Home/Get action entered");
+            Debug.WriteLine("Home/Get action entered. This is the home controller");
             _logger.LogInfo("Home Collection Get Action entered");
             return "NetCoreHooks Project has loaded successfully";
         }        
