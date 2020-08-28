@@ -25,7 +25,7 @@ namespace NetCoreHooks.Controllers
         public string Get()
         {            
             _logger.LogInfo("NetCoreHooks Home Get Action entered.");
-            return "NetCoreHooks Project has loaded successfully. \n Execute Postman calls now";
+            return "NetCoreHooks Project has loaded successfully. \nYou may execute API calls now";
         }        
     }
 }

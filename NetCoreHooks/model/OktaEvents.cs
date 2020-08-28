@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace NetCoreHooks.model
@@ -17,6 +18,15 @@ namespace NetCoreHooks.model
             this.EventType = eventType;
             this.DisplayMessage = displayMessage;
             this.EventTime = eventTime;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"EventType: {this.EventType}");
+            sb.Append($"EventTime: {this.EventTime}");
+            sb.Append($"DisplayMessage: {this.DisplayMessage}");
+            return sb.ToString();
         }
     }
 }

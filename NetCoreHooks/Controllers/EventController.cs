@@ -31,7 +31,7 @@ namespace NetCoreHooks.Controllers
         [Route("user-account")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostEvent()
+        public async Task<IActionResult> Post()
         {
             _logger.LogInfo("Event PostEvent action entered");
             OktaEvents oktaEvents = null;
@@ -72,11 +72,11 @@ namespace NetCoreHooks.Controllers
         [Route("{*more}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult EndpointVerify()
+        public IActionResult Get()
         {
             _logger.LogInfo("Event EndpointVerify entered.");            
             VerificationResponse response = new VerificationResponse();
-            string verification = Request.Headers[VERIFICATION_HEADER]; //will return null if not found
+            string verification = Request.Headers[VERIFICATION_HEADER]; 
             if (verification == null)
             {
                 verification = "header " + VERIFICATION_HEADER + " was not found in the Request Headers collection";
