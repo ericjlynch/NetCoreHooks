@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreHooks.Contracts;
+using NLog;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,17 +15,16 @@ namespace NetCoreHooks.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private readonly ILoggerService _logger;        
+        private readonly ILoggerService _logger;       
 
         public HomeController(ILoggerService loggerService)
         {
-            _logger = loggerService;
+            _logger = loggerService;  
         }
         // GET: api/<HomeController>
         [HttpGet]
-        public string Get()
+        public string GetAsync()
         {            
-            _logger.LogInfo("NetCoreHooks Home Get Action entered.");
             return "NetCoreHooks Project has loaded successfully. \nYou may execute API calls now";
         }        
     }
