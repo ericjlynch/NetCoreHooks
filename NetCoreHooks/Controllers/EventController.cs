@@ -11,6 +11,7 @@ using NetCoreHooks.model;
 using Newtonsoft.Json.Linq;
 using NLog;
 
+
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetCoreHooks.Controllers
@@ -21,6 +22,7 @@ namespace NetCoreHooks.Controllers
     {
         private ILoggerService _logger;
         private const string VERIFICATION_HEADER = "x-Okta-Verification-Challenge";
+        
 
         public EventController(ILoggerService loggerService)
         {
