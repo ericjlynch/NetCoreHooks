@@ -45,7 +45,7 @@ namespace NetCoreHooks
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddScoped<IEmployeeRepository, EmployeeService>();
             services.AddAutoMapper(typeof(Maps));
-            services.AddControllers();
+            services.AddControllers();                       
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

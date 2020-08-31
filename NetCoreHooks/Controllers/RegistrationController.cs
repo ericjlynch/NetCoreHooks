@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using NetCoreHooks.Contracts;
 using NetCoreHooks.DTOs;
+using NetCoreHooks.model;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace NetCoreHooks.Controllers
@@ -47,14 +49,14 @@ namespace NetCoreHooks.Controllers
             //grab http reques body
             var reader = new StreamReader(Request.Body);
             var payLoad = await reader.ReadToEndAsync();
-            Debug.WriteLine(payLoad);
-
-            //convert incoming http request to JSon JObject
-            var parsedJson = JObject.Parse(payLoad);
+            Debug.WriteLine(payLoad);           
 
             //make sure you have a good payload
             if(payLoad != null)
             {
+                //convert incoming http request to JSon JObject
+                var parsedJson = JObject.Parse(payLoad);
+
                 //get SSN from payload via Linq-to-JSon
                 var userProfile = (JObject)parsedJson.SelectToken("data")
                     .SelectToken("userProfile");
@@ -74,29 +76,40 @@ namespace NetCoreHooks.Controllers
 
                 //get ssn from database for this user
                 var employee = await _db.FindByUserName(userName);
-                var response = _mapper.Map<EmployeeDTO>(employee);
-                ssnFromDatabase = response.SSN;
+                var employeeDTO = _mapper.Map<EmployeeDTO>(employee);
+                ssnFromDatabase = employeeDTO.SSN;
                 Debug.WriteLine(ssnFromDatabase);
 
                 //do the SSNs match? 
                 if(ssnFromOkta == ssnFromDatabase)
                 {
-                    //you have a match
+                    //you have a match, now construct your response back to Okta
+                    OktaHookResponse response = new OktaHookResponse();
+                    Dictionary<String, String> dict = new Dictionary<string, string>
+                    {
+                        { "ssn", String.Empty }                        
+                    };
+
+                    Command command = new Command();
+                    command.type = "com.okta.user.profile.update";
+                    command.value = dict;
+                    response.commands.Add(command);
+
                     Debug.WriteLine("SSN match detected. Returing 200 OK");
-                    return Ok("User profiles match");
+                    Debug.WriteLine("Response sent back to Okta:\n " + response);
+                    return Ok(response);
                 }
                 else
                 {
                     //no match. Disallow registration
                     return Unauthorized("Customer SSNs do not match");
                 }
-
             } else
             {
                 //payLoad was null
                 return BadRequest("no incoming payload detected");
             }           
-        }
+        }        
     }
 }
  

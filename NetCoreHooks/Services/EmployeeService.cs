@@ -36,7 +36,5 @@ namespace NetCoreHooks.Services
                 .FirstOrDefaultAsync();                
             return employee;
         }
-
-        
     }
 }
