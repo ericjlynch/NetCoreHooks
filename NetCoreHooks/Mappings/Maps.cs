@@ -12,7 +12,7 @@ namespace NetCoreHooks.Mappings
     {
         public Maps()
         {
-            CreateMap<Employee, EmployeeDTO>();
+            CreateMap<Employee, EmployeeDTO>().ReverseMap();
         }
     }
 }

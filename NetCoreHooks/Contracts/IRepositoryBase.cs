@@ -10,5 +10,6 @@ namespace NetCoreHooks.Contracts
         Task<IList<T>> FindAll();
         Task<T> FindById(int id);
         Task<T> FindByUserName(string userName);
+        
     }
 }

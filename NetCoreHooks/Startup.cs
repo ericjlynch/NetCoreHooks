@@ -43,7 +43,7 @@ namespace NetCoreHooks
                     .AllowAnyHeader());
             });
             services.AddSingleton<ILoggerService, LoggerService>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeService>();
             services.AddAutoMapper(typeof(Maps));
             services.AddControllers();
         }
