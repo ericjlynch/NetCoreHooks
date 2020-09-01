@@ -42,11 +42,13 @@ namespace NetCoreHooks.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> VerifyEmployeeSSNByUserName()
         {
             string ssnFromOkta = String.Empty;
             string userName = String.Empty;
             string ssnFromDatabase = String.Empty;
+            OktaHookResponse response = null;
 
             //grab http reques body
             var reader = new StreamReader(Request.Body);
@@ -73,20 +75,66 @@ namespace NetCoreHooks.Controllers
                     Debug.WriteLine(ssnFromOkta);
                 } else
                 {
-                    return BadRequest("Incoming SSN was null");
+                    //couldn't detect SSN from payload
+                    response = new OktaHookResponse();
+                    Dictionary<String, String> dict = new Dictionary<string, string>
+                    {
+                        { "registration", "DENY" }
+                    };
+
+                    Command command = new Command();
+                    command.type = "com.okta.action.update";
+                    command.value = dict;
+                    response.commands.Add(command);
+                    Error error = new Error();
+                    error.ErrorSummary = "Unable to add registrant";
+                    error.ErrorCauses = new List<ErrorCause>
+                    {
+                        new ErrorCause{ErrorSummary = "SSN not detected",
+                            Domain="end-user", Location="data.UserProfile.login", Reason="SSN could not be verified"}
+                    };
+                    return BadRequest("response");
                 }
 
                 //get ssn from database for this user
                 var employee = await _db.FindByUserName(userName);
                 var employeeDTO = _mapper.Map<EmployeeDTO>(employee);
-                ssnFromDatabase = employeeDTO.SSN;
+
+                if (employeeDTO != null)
+                {
+                    ssnFromDatabase = employeeDTO.SSN; 
+                }
+                else
+                {
+                    response = new OktaHookResponse();
+                    Dictionary<String, String> dict = new Dictionary<string, string>
+                    {
+                        { "registration", "DENY" }
+                    };
+
+                    Command command = new Command();
+                    command.type = "com.okta.action.update";
+                    command.value = dict;
+                    response.commands.Add(command);
+                    Error error = new Error();
+                    error.ErrorSummary = "Unable to add registrant";
+                    error.ErrorCauses = new List<ErrorCause>
+                    {
+                        new ErrorCause{ErrorSummary = "Unable to convert employee to EmployeeDTO", 
+                            Domain="end-user", Location="data.UserProfile.login", Reason="Unable to convert employee"}
+                    };
+
+                    Debug.WriteLine("unable to convert employee to EmployeeDTO");
+                    return NotFound();
+                }
+
                 Debug.WriteLine(ssnFromDatabase);
 
                 //do the SSNs match? 
                 if(ssnFromOkta == ssnFromDatabase)
                 {
                     //you have a match, now construct your response back to Okta
-                    OktaHookResponse response = new OktaHookResponse();
+                    response = new OktaHookResponse();
                     Dictionary<String, String> dict = new Dictionary<string, string>
                     {
                         { "ssn", String.Empty }                        
@@ -104,12 +152,41 @@ namespace NetCoreHooks.Controllers
                 else
                 {
                     //no match. Disallow registration
-                    return Unauthorized("Customer SSNs do not match");
+                    response = new OktaHookResponse();
+                    Dictionary<String, String> dict = new Dictionary<string, string>
+                    {
+                        { "registration", "DENY" }
+                    };
+
+                    Command command = new Command();
+                    command.type = "com.okta.action.update";
+                    command.value = dict;
+                    response.commands.Add(command);
+                    Error error = new Error();
+                    error.ErrorSummary = "Unable to add registrant";
+                    error.ErrorCauses = new List<ErrorCause>
+                    {
+                        new ErrorCause{ErrorSummary = "SSN does not match",
+                            Domain="end-user", Location="data.UserProfile.login", 
+                            Reason="Payload SSN does not match Database SSN"}
+                    };
+                    return Unauthorized(response);
                 }
             } else
             {
+                response = new OktaHookResponse();
+                Dictionary<String, String> dict = new Dictionary<string, string>
+                {
+                    { "registration", "DENY" }
+                };               
+
+                Command command = new Command();
+                command.type = "com.okta.action.update";
+                command.value = dict;
+                response.commands.Add(command);
+
                 //payLoad was null
-                return BadRequest("no incoming payload detected");
+                return BadRequest(response);
             }           
         }        
     }
