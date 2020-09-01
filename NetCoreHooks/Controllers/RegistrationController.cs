@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,7 @@ using NetCoreHooks.DTOs;
 using NetCoreHooks.model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 
 namespace NetCoreHooks.Controllers
 {
@@ -95,7 +97,7 @@ namespace NetCoreHooks.Controllers
                     command.value = dict;
                     response.commands.Add(command);
 
-                    Debug.WriteLine("SSN match detected. Returing 200 OK");
+                    Debug.WriteLine("SSN match detected. Returing 200 OK\n");
                     Debug.WriteLine("Response sent back to Okta:\n " + response);
                     return Ok(response);
                 }
