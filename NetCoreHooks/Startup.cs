@@ -33,7 +33,10 @@ namespace NetCoreHooks
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("LocalDBConnectionString")));
+                options.UseSqlServer(Configuration.GetConnectionString("LocalDBConnectionString")));
+            services.AddDbContext<RegistrantContext>(options =>
+                options.UseInMemoryDatabase("InMemoryDatabase"), 
+                ServiceLifetime.Scoped, ServiceLifetime.Scoped);
 
             services.AddCors(o =>
             {
@@ -44,6 +47,7 @@ namespace NetCoreHooks
             });
             services.AddSingleton<ILoggerService, LoggerService>();
             services.AddScoped<IEmployeeRepository, EmployeeService>();
+            services.AddScoped<IRegistrantRepository, RegistrantService>();
             services.AddAutoMapper(typeof(Maps));
             services.AddControllers();                       
         }

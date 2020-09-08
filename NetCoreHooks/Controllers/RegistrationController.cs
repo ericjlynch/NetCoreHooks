@@ -24,18 +24,20 @@ namespace NetCoreHooks.Controllers
     public class RegistrationController : ControllerBase
     {
         private readonly ILoggerService _logger;
-        private readonly IEmployeeRepository _db;
+        private readonly IRegistrantRepository _db;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
-
+        private readonly IRegistrantRepository _registrantRepository;
 
         public RegistrationController(ILoggerService loggerService,
-            IEmployeeRepository employeeRepository, IMapper mapper, IConfiguration configuration)
+            IRegistrantRepository RegistrantRepository, IMapper mapper, 
+            IConfiguration configuration, IRegistrantRepository registrantRepository)
         {
             _logger = loggerService;
-            _db = employeeRepository;
+            _db = RegistrantRepository;
             _mapper = mapper;
             _config = configuration;
+            _registrantRepository = registrantRepository;
         }
 
         [HttpPost("dbLookup")]
@@ -43,7 +45,7 @@ namespace NetCoreHooks.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> VerifyEmployeeSSNByUserName()
+        public async Task<IActionResult> VerifyRegistrantSSNByUserName()
         {
             string ssnFromOkta = String.Empty;
             string userName = String.Empty;
@@ -97,12 +99,12 @@ namespace NetCoreHooks.Controllers
                 }
 
                 //get ssn from database for this user
-                var employee = await _db.FindByUserName(userName);
-                var employeeDTO = _mapper.Map<EmployeeDTO>(employee);
+                var Registrant = await _registrantRepository.FindByUserName(userName);
+                var RegistrantDTO = _mapper.Map<RegistrantDTO>(Registrant);
 
-                if (employeeDTO != null)
+                if (RegistrantDTO != null)
                 {
-                    ssnFromDatabase = employeeDTO.SSN; 
+                    ssnFromDatabase = RegistrantDTO.SSN; 
                 }
                 else
                 {
@@ -120,11 +122,11 @@ namespace NetCoreHooks.Controllers
                     error.ErrorSummary = "Unable to add registrant";
                     error.ErrorCauses = new List<ErrorCause>
                     {
-                        new ErrorCause{ErrorSummary = "Unable to convert employee to EmployeeDTO", 
-                            Domain="end-user", Location="data.UserProfile.login", Reason="Unable to convert employee"}
+                        new ErrorCause{ErrorSummary = "Unable to convert Registrant to RegistrantDTO", 
+                            Domain="end-user", Location="data.UserProfile.login", Reason="Unable to convert Registrant"}
                     };
 
-                    Debug.WriteLine("unable to convert employee to EmployeeDTO");
+                    Debug.WriteLine("unable to convert Registrant to RegistrantDTO");
                     return NotFound();
                 }
 

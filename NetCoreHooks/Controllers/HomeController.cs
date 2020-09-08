@@ -22,14 +22,17 @@ namespace NetCoreHooks.Controllers
         private readonly IEmployeeRepository _db;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
+        private readonly IRegistrantRepository _registrantRepository;
 
         public HomeController(ILoggerService loggerService, 
-            IEmployeeRepository employeeRepository, IMapper mapper, IConfiguration configuration)
+            IEmployeeRepository employeeRepository, IMapper mapper, 
+            IConfiguration configuration, IRegistrantRepository registrantRepository)
         {
             _logger = loggerService;
             _db = employeeRepository;
             _mapper = mapper;
             _config = configuration;
+            _registrantRepository = registrantRepository;
         }
         // GET: api/<HomeController>
         [HttpGet]
@@ -38,10 +41,10 @@ namespace NetCoreHooks.Controllers
             try
             {
                 _logger.LogInfo("NetCoreHooks Home Get Action entered.");
-                var employees = await _db.FindAll();
+                var employees = await _registrantRepository.FindAll();
                 if (employees != null)
                 {
-                    var response = _mapper.Map<IList<EmployeeDTO>>(employees);
+                    var response = _mapper.Map<IList<RegistrantDTO>>(employees);
                     if (response != null)
                     {
                         StringBuilder sb = new StringBuilder("Employees returned:" + Environment.NewLine);
