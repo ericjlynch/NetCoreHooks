@@ -41,16 +41,16 @@ namespace NetCoreHooks.Controllers
             try
             {
                 _logger.LogInfo("NetCoreHooks Home Get Action entered.");
-                var employees = await _registrantRepository.FindAll();
-                if (employees != null)
+                var registrants = await _registrantRepository.FindAll();
+                if (registrants != null)
                 {
-                    var response = _mapper.Map<IList<RegistrantDTO>>(employees);
+                    var response = _mapper.Map<IList<RegistrantDTO>>(registrants);
                     if (response != null)
                     {
-                        StringBuilder sb = new StringBuilder("Employees returned:" + Environment.NewLine);
-                        foreach (var employee in employees)
+                        StringBuilder sb = new StringBuilder("Registrants in database:" + Environment.NewLine);
+                        foreach (var registrant in registrants)
                         {
-                            sb.Append(employee.FirstName + " " + employee.LastName + Environment.NewLine);
+                            sb.Append($"{registrant.FirstName} {registrant.LastName} : {registrant.SSN}" + Environment.NewLine);
                         }
                         return Ok(sb.ToString());
                     }
