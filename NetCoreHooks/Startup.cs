@@ -32,8 +32,6 @@ namespace NetCoreHooks
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(Configuration.GetConnectionString("LocalDBConnectionString")));
             services.AddDbContext<RegistrantContext>(options =>
                 options.UseInMemoryDatabase("InMemoryDatabase"), 
                 ServiceLifetime.Scoped, ServiceLifetime.Scoped);
@@ -45,8 +43,7 @@ namespace NetCoreHooks
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
-            services.AddSingleton<ILoggerService, LoggerService>();
-            services.AddScoped<IEmployeeRepository, EmployeeService>();
+            services.AddSingleton<ILoggerService, LoggerService>();            
             services.AddScoped<IRegistrantRepository, RegistrantService>();
             services.AddAutoMapper(typeof(Maps));
             services.AddControllers();                       

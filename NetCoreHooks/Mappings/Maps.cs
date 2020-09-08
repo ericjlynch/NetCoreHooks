@@ -11,8 +11,7 @@ namespace NetCoreHooks.Mappings
     public class Maps : Profile
     {
         public Maps()
-        {
-            CreateMap<Employee, EmployeeDTO>().ReverseMap();
+        {            
             CreateMap<Registrant, RegistrantDTO>().ReverseMap();
         }
     }

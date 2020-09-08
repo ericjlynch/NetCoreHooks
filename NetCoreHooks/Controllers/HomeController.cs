@@ -18,18 +18,16 @@ namespace NetCoreHooks.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private readonly ILoggerService _logger;
-        private readonly IEmployeeRepository _db;
+        private readonly ILoggerService _logger;        
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly IRegistrantRepository _registrantRepository;
 
         public HomeController(ILoggerService loggerService, 
-            IEmployeeRepository employeeRepository, IMapper mapper, 
+            IMapper mapper, 
             IConfiguration configuration, IRegistrantRepository registrantRepository)
         {
-            _logger = loggerService;
-            _db = employeeRepository;
+            _logger = loggerService;            
             _mapper = mapper;
             _config = configuration;
             _registrantRepository = registrantRepository;
@@ -47,7 +45,7 @@ namespace NetCoreHooks.Controllers
                     var response = _mapper.Map<IList<RegistrantDTO>>(registrants);
                     if (response != null)
                     {
-                        StringBuilder sb = new StringBuilder("Registrants in database:" + Environment.NewLine);
+                        StringBuilder sb = new StringBuilder("Registrant - SSNs:" + Environment.NewLine);
                         foreach (var registrant in registrants)
                         {
                             sb.Append($"{registrant.FirstName} {registrant.LastName} : {registrant.SSN}" + Environment.NewLine);
