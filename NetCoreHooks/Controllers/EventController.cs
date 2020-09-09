@@ -11,7 +11,6 @@ using NetCoreHooks.model;
 using Newtonsoft.Json.Linq;
 using NLog;
 
-
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace NetCoreHooks.Controllers
@@ -21,12 +20,36 @@ namespace NetCoreHooks.Controllers
     public class EventController : ControllerBase
     {
         private ILoggerService _logger;
-        private const string VERIFICATION_HEADER = "x-Okta-Verification-Challenge";
-        
+        //Set the value of the constant to "x-Okta-Verification-Challenge"
+        private const string VERIFICATION_HEADER = "x-Okta-Verification-Challenge";        
 
         public EventController(ILoggerService loggerService)
         {
             _logger = loggerService;
+        }
+
+        [HttpGet]
+        [Route("{*more}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Get()
+        {
+            _logger.LogInfo("Event EndpointVerify entered.");
+            /*Instantiate VerificationResponse object*/
+            VerificationResponse response = new VerificationResponse();
+
+            string verification = Request.Headers[VERIFICATION_HEADER];
+            if (verification == null)
+            {
+                verification = "header " + VERIFICATION_HEADER + " was not found in the Request Headers collection";
+                _logger.LogWarn($"Event EndpointVerify BadRequest will be returned. {verification}");
+                return BadRequest(verification);
+            }
+
+            response.Verification = verification;
+            Debug.WriteLine("Verification: \n" + verification);
+            _logger.LogInfo($"Event EndpointVerify suceeded: {response.Verification}");
+            return Ok(response);
         }
 
         [HttpPost]
@@ -53,7 +76,9 @@ namespace NetCoreHooks.Controllers
                     oktaEvents.EventType = desiredEvent["eventType"].ToString();
                     oktaEvents.DisplayMessage = desiredEvent["displayMessage"].ToString();
                     oktaEvents.EventTime = parsedJson["eventTime"].ToString();
-                    _logger.LogInfo($"Post Event Succeeded with {oktaEvents.DisplayMessage} at {oktaEvents.EventTime}");
+                    _logger.LogInfo($"Post Event Succeeded\n {oktaEvents.ToString()}");
+
+                    //return Ok IActionResult with your oktaEvents object
                     return Ok(oktaEvents);
                 }
                 else
@@ -68,28 +93,6 @@ namespace NetCoreHooks.Controllers
                 _logger.LogError($"Event PostEvent failed with error message: {ex.Message} - {ex.InnerException}");
                 return BadRequest(oktaEvents);
             }
-        }
-
-        [HttpGet]
-        [Route("{*more}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Get()
-        {
-            _logger.LogInfo("Event EndpointVerify entered.");            
-            VerificationResponse response = new VerificationResponse();
-            string verification = Request.Headers[VERIFICATION_HEADER]; 
-            if (verification == null)
-            {
-                verification = "header " + VERIFICATION_HEADER + " was not found in the Request Headers collection";
-                _logger.LogWarn($"Event EndpointVerify BadRequest will be returned. {verification}");
-                return BadRequest(verification);
-            }
-
-            response.Verification = verification;
-            Debug.WriteLine("Verification: \n" + verification);
-            _logger.LogInfo($"Event EndpointVerify suceeded: {response.Verification}");
-            return Ok(response);
-        }
+        }       
     }
 }
